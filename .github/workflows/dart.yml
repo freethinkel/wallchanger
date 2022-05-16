@@ -48,3 +48,4 @@ jobs:
         with:
           files: 'build/wallchanger'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+          release-tag: v0.0.1
