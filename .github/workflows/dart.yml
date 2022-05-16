@@ -42,7 +42,7 @@ jobs:
         run: dart analyze
 
       - name: Build
-        run: dart compile exe ./lib/main.dart -o ./build/wallchanger
+        run: dart compile exe lib/main.dart -o build/wallchanger
 
       - uses: AButler/upload-release-assets@v2.0
         with:
