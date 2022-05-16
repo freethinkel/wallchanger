@@ -34,6 +34,7 @@ void main(List<String> args) async {
       help: 'Use unsplash random photo from category', callback: (category) {
     unsplashCategory = category;
   });
+
   parser.addOption('time',
       abbr: 't',
       help: 'Interval minutes for reset wallpaper', callback: (data) {
@@ -42,6 +43,7 @@ void main(List<String> args) async {
       time = int.tryParse((data));
     }
   });
+
   parser.addOption(
     'directory',
     abbr: 'd',
