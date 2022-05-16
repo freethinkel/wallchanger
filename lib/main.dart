@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:Wallchanger/config.dart';
+import 'package:Wallchanger/services/console.service.dart';
 import 'package:Wallchanger/services/directory.service.dart';
 import 'package:Wallchanger/services/storage.service.dart';
 import 'package:Wallchanger/services/unsplash.service.dart';
-import 'package:Wallchanger/services/wallpaper.service.dart';
 import 'package:args/args.dart';
+
+var isDebugMode = false;
 
 void main(List<String> args) async {
   var parser = ArgParser();
@@ -18,7 +20,13 @@ void main(List<String> args) async {
   parser.addFlag('help', abbr: 'h', negatable: false, callback: (used) {
     if (used) {
       print(parser.usage);
+      exit(0);
     }
+  });
+
+  parser.addFlag('verbose', abbr: 'v', help: 'Verbose mode', negatable: false,
+      callback: (verbose) {
+    isDebugMode = verbose;
   });
 
   parser.addOption('unsplash',
@@ -45,9 +53,23 @@ void main(List<String> args) async {
 
   parser.parse(args);
 
+  if (isDebugMode) {
+    print('===DEBUG MODE===');
+    if (isSetTime) {
+      print('Run change wallperper every ${time} minutes');
+    }
+  }
+
   if (unsplashCategory != null) {
     if (isSetTime) {
+      await setUnsplashWallpaper(unsplashCategory);
+      if (isDebugMode) {
+        showDebugCountDown(time ?? 0);
+      }
       Timer.periodic(Duration(minutes: time ?? 10), (timer) async {
+        if (isDebugMode) {
+          showDebugCountDown(time ?? 0);
+        }
         await setUnsplashWallpaper(unsplashCategory);
       });
     } else {
@@ -62,7 +84,14 @@ void main(List<String> args) async {
         : selectedDir ?? '';
     var dir = Directory(fullPath);
     if (isSetTime) {
+      await setDirectoryWallpaper(dir);
+      if (isDebugMode) {
+        showDebugCountDown(time ?? 0);
+      }
       Timer.periodic(Duration(minutes: time ?? 10), (timer) async {
+        if (isDebugMode) {
+          showDebugCountDown(time ?? 0);
+        }
         await setDirectoryWallpaper(dir);
       });
     } else {
@@ -73,13 +102,28 @@ void main(List<String> args) async {
 }
 
 setDirectoryWallpaper(Directory dir) async {
+  if (isDebugMode) {
+    print('Settings directory photo as wallpaper...');
+  }
   await DirectoryService().setRandomImageFromDir(dir);
 }
 
 setUnsplashWallpaper(category) async {
+  if (isDebugMode) {
+    print('Settings unsplash wallpaper...');
+  }
   await StorageService().clearTempDir();
   var unsplash = UnsplashService(tempDir: await StorageService().getTempPath());
-  var file = await (category == 'random'
+  await (category == 'random'
       ? unsplash.setRandomPhoto()
       : unsplash.setPhotoFromCategory(category ?? ""));
+}
+
+showDebugCountDown(int time) {
+  Timer.periodic(Duration(minutes: time), (timer) {
+    Console.write('${time - timer.tick} ');
+    if (time - timer.tick == 0) {
+      timer.cancel();
+    }
+  });
 }
