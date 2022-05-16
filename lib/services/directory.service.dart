@@ -45,5 +45,5 @@ class Entity {
   FileSystemEntity entity;
   FileStat stat;
 
-  Entity({required this.entity, required this.stat});
+  Entity({this.entity, this.stat});
 }

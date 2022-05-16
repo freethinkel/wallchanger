@@ -13,9 +13,9 @@ var isDebugMode = false;
 void main(List<String> args) async {
   var parser = ArgParser();
   var isSetTime = false;
-  int? time = null;
-  String? unsplashCategory = null;
-  String? selectedDir = null;
+  int time = null;
+  String unsplashCategory = null;
+  String selectedDir = null;
 
   parser.addFlag('help', abbr: 'h', negatable: false, callback: (used) {
     if (used) {

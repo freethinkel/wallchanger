@@ -6,7 +6,7 @@ class UnsplashService {
   var _url = 'https://source.unsplash.com';
   Directory tempDir;
 
-  UnsplashService({required this.tempDir});
+  UnsplashService({this.tempDir});
 
   Future<String> _getRedirectedUrl(String url) async {
     var httpClient = HttpClient();
