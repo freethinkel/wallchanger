@@ -73,18 +73,13 @@ void main(List<String> args) async {
 }
 
 setDirectoryWallpaper(Directory dir) async {
-  var file = await DirectoryService().getRandomImageFromDir(dir);
-  if (file != null) {
-    WallpaperService().setWallpaper(file);
-  }
+  await DirectoryService().setRandomImageFromDir(dir);
 }
 
 setUnsplashWallpaper(category) async {
   await StorageService().clearTempDir();
   var unsplash = UnsplashService(tempDir: await StorageService().getTempPath());
   var file = await (category == 'random'
-      ? unsplash.getRandomPhoto()
-      : unsplash.getPhotoFromCategory(category ?? ""));
-
-  await WallpaperService().setWallpaper(file);
+      ? unsplash.setRandomPhoto()
+      : unsplash.setPhotoFromCategory(category ?? ""));
 }

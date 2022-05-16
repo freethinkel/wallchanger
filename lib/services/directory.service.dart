@@ -2,12 +2,13 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:Wallchanger/services/storage.service.dart';
+import 'package:Wallchanger/services/wallpaper.service.dart';
 import 'package:path/path.dart';
 
 class DirectoryService {
   final allowedExtensions = ['png', 'jpg', 'jpeg'];
 
-  Future<File?> getRandomImageFromDir(Directory dir) async {
+  Future<List<File>> _getImagesFromDir(Directory dir) async {
     var files = await dir.list().toList();
 
     var images = (await Future.wait(files.map((entity) async {
@@ -21,6 +22,12 @@ class DirectoryService {
         })
         .map((entity) => File(entity.entity.path))
         .toList();
+
+    return images;
+  }
+
+  Future<void> setRandomImageFromDir(Directory dir) async {
+    var images = await _getImagesFromDir(dir);
     if (images.length > 0) {
       await StorageService().clearTempDir();
       var random = Random().nextInt(images.length);
@@ -29,9 +36,8 @@ class DirectoryService {
       var newPath =
           (await StorageService().getTempPath()).path + basename(photo.path);
       var newFile = await photo.copy(newPath);
-      return newFile;
+      await WallpaperService().setWallpaper(newFile);
     }
-    return null;
   }
 }
 

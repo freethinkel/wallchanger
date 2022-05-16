@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:Wallchanger/services/wallpaper.service.dart';
+
 class UnsplashService {
   var _url = 'https://source.unsplash.com';
   Directory tempDir;
@@ -47,11 +49,14 @@ class UnsplashService {
     return wallFile;
   }
 
-  Future<File> getRandomPhoto() async {
-    return downloadImage(await getFullImageUrl('${_url}/random'));
+  Future<void> setRandomPhoto() async {
+    var file = await downloadImage(await getFullImageUrl('${_url}/random'));
+    await WallpaperService().setWallpaper(file);
   }
 
-  Future getPhotoFromCategory(String category) async {
-    return downloadImage(await getFullImageUrl('${_url}/random?${category}'));
+  Future<void> setPhotoFromCategory(String category) async {
+    var file = await downloadImage(
+        await getFullImageUrl('${_url}/random?${category}'));
+    await WallpaperService().setWallpaper(file);
   }
 }
